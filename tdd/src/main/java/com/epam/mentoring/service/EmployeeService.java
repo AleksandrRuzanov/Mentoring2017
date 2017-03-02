@@ -2,8 +2,6 @@ package com.epam.mentoring.service;
 
 import com.epam.mentoring.models.Employee;
 import com.epam.mentoring.repository.EmployeeRepository;
-import com.epam.mentoring.repository.MenteeRepository;
-import com.epam.mentoring.repository.MentorRepository;
 import com.epam.mentoring.service.exception.EmployeeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +16,17 @@ public abstract class EmployeeService<R extends EmployeeRepository, T extends Em
     @Autowired
     private R repository;
 
-    @Autowired
-    protected MentorRepository mentorDao;
-    @Autowired
-    protected MenteeRepository menteeDao;
-
 
     protected abstract T getInstanceEntity();
+
+    public T create(T employee) throws EmployeeException {
+        try {
+            repository.save(employee);
+        } catch (Exception ex) {
+            throw new EmployeeException("Error creating the employee: " + ex.toString());
+        }
+        return employee;
+    }
 
     public T create(String email, String name) throws EmployeeException {
         T employee;

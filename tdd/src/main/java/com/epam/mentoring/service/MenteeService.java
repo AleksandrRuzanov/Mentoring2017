@@ -15,4 +15,5 @@ public class MenteeService extends EmployeeService<MenteeRepository, Mentee> {
     protected Mentee getInstanceEntity() {
         return new Mentee();
     }
+
 }

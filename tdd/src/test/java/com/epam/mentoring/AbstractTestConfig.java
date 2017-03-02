@@ -1,11 +1,11 @@
 package com.epam.mentoring;
 
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(SpringRunner.class)
+/**
+ * Created by Aleksandr_Ruzanov on 02.03.2017.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AbstractTest {
-
+public abstract class AbstractTestConfig {
 }

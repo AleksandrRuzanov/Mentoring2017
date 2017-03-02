@@ -10,6 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Repository
-@Transactional
 public interface EmployeeRepository<T extends Employee> extends CrudRepository<T, Long> {
 }

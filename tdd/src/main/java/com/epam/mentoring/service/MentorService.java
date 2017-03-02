@@ -4,6 +4,7 @@ import com.epam.mentoring.models.Mentee;
 import com.epam.mentoring.models.Mentor;
 import com.epam.mentoring.repository.MentorRepository;
 import com.epam.mentoring.service.exception.EmployeeException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +12,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MentorService extends EmployeeService<MentorRepository, Mentor> {
+
+    @Autowired
+    private MentorRepository mentorRepository;
+    @Autowired
+    private MenteeService menteeService;
 
     @Override
     protected Mentor getInstanceEntity() {
@@ -20,12 +26,12 @@ public class MentorService extends EmployeeService<MentorRepository, Mentor> {
     public Mentor addMentee(long mentorId, long menteeId) throws EmployeeException {
         Mentor mentor;
         Mentee mentee;
-        mentor = mentorDao.findOne(mentorId);
-        mentee = menteeDao.findOne(menteeId);
+        mentor = mentorRepository.findOne(mentorId);
+        mentee = menteeService.getEmployee(menteeId);
         mentor.addMentee(mentee);
         mentee.setMentor(mentor);
-        mentorDao.save(mentor);
-        menteeDao.save(mentee);
+        mentorRepository.save(mentor);
+        menteeService.create(mentee);
         return mentor;
     }
 
