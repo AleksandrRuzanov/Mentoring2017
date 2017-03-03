@@ -26,7 +26,7 @@ public abstract class EmployeeController<S extends EmployeeService, E extends Em
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(employee, HttpStatus.OK);// employeeService.create(employee);
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
