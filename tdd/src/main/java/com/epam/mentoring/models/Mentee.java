@@ -41,10 +41,4 @@ public class Mentee extends Employee {
         this.mentor = mentor;
     }
 
-    @Override
-    public String toString() {
-        return "Mentee{" +
-                "mentorId=" + mentor.getId() +
-                "} " + super.toString();
-    }
 }

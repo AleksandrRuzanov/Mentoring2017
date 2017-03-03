@@ -1,5 +1,6 @@
 package com.epam.mentoring.service;
 
+import com.epam.mentoring.controllers.RequestEmployee;
 import com.epam.mentoring.models.Employee;
 import com.epam.mentoring.repository.EmployeeRepository;
 import com.epam.mentoring.service.exception.EmployeeException;
@@ -21,7 +22,7 @@ public abstract class EmployeeService<R extends EmployeeRepository, T extends Em
 
     public T create(T employee) throws EmployeeException {
         try {
-            repository.save(employee);
+            employee = (T) repository.save(employee);
         } catch (Exception ex) {
             throw new EmployeeException("Error creating the employee: " + ex.toString());
         }
@@ -51,12 +52,8 @@ public abstract class EmployeeService<R extends EmployeeRepository, T extends Em
         }
     }
 
-    public T update(long id, String email, String name) throws EmployeeException {
-        T employee;
+    public T update(T employee) throws EmployeeException {
         try {
-            employee = (T) repository.findOne(id);
-            employee.setEmail(email);
-            employee.setName(name);
             repository.save(employee);
         } catch (Exception ex) {
             throw new EmployeeException("Error updating the employee: " + ex.toString());
@@ -74,4 +71,21 @@ public abstract class EmployeeService<R extends EmployeeRepository, T extends Em
         return employee;
     }
 
+    public T create(RequestEmployee request) throws EmployeeException {
+        T employee;
+        employee = getInstanceEntity();
+        employee.setEmail(request.getEmail());
+        employee.setName(request.getName());
+        employee = create(employee);
+        return employee;
+    }
+
+    public T update(RequestEmployee request) throws EmployeeException {
+        T employee;
+        employee = getEmployee(request.getId());
+        employee.setEmail(request.getEmail());
+        employee.setName(request.getName());
+        update(employee);
+        return employee;
+    }
 }

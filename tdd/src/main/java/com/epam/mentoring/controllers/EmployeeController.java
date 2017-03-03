@@ -4,61 +4,71 @@ import com.epam.mentoring.models.Employee;
 import com.epam.mentoring.service.EmployeeService;
 import com.epam.mentoring.service.exception.EmployeeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public abstract class EmployeeController<T extends EmployeeService> {
+public abstract class EmployeeController<S extends EmployeeService, E extends Employee> {
 
     @Autowired
-    protected T employeeService;
+    protected S employeeService;
 
-    @RequestMapping("/create")
-    @ResponseBody
-    public String create(String email, String name) {
-        Employee employee = null;
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity<E> create(RequestEmployee request) {
+        E employee;
         try {
-            employee = employeeService.create(email, name);
-        } catch (EmployeeException ex) {
-            return "Error create the employee: " + ex.toString();
+            employee = (E) employeeService.create(request);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "Employee succesfully created! (id = " + employee.getId() + ")";
+        return new ResponseEntity<>(employee, HttpStatus.OK);// employeeService.create(employee);
     }
 
-    @RequestMapping("/delete")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public String delete(long id) {
+    public ResponseEntity<E> delete(long id) {
         try {
-            employeeService.delete(id);
+            Employee employee = employeeService.getEmployee(id);
+            if (employee != null && employee.getId() > 0) {
+                employeeService.delete(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (EmployeeException ex) {
-            return "Error deleting the employee: " + ex.toString();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "employee succesfully deleted!";
     }
 
-
-    @RequestMapping("/update")
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
     @ResponseBody
-    public String update(long id, String email, String name) {
+    public ResponseEntity<E> update(RequestEmployee request) {
+        E employee;
         try {
-            employeeService.update(id, email, name);
+            employee = (E) employeeService.update(request);
         } catch (EmployeeException ex) {
-            return "Error updating the employee: " + ex.toString();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "employee succesfully updated!";
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
-    @RequestMapping("/show")
-    @ResponseBody
-    public String show(long id) {
-        Employee employee;
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    @ResponseBody()
+    public ResponseEntity<E> show(@PathVariable("id") long id) {
+        E employee;
         try {
-            employee = employeeService.getEmployee(id);
+            employee = (E) employeeService.getEmployee(id);
+            if (employee != null && employee.getId() > 0)
+                return new ResponseEntity<>(employee, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (EmployeeException ex) {
-            return "Error updating the employee: " + ex.toString();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return employee.toString();
     }
 
 }
