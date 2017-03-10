@@ -2,6 +2,7 @@ package com.epam.mentoring;
 
 import com.epam.mentoring.person.Person;
 import gherkin.deps.com.google.gson.Gson;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -28,22 +29,23 @@ public class HttpHelper {
             con.setConnectTimeout(60000);
             con.setReadTimeout(60000);
             con.setRequestProperty("User-Agent", USER_AGENT);
-            //con.setRequestProperty("Accept-Encoding", "application/json");
-            //con.setRequestProperty("Content-Type", "UTF-8");
+            con.setRequestProperty("charset", "utf-8");
         } catch (Exception e) {
             System.out.println("connection i/o failed");
         }
         return con;
     }
 
-    public static Person sendRequest(String url, String type, String reqbody) {
+    public static Person sendRequest(String url, RequestMethod type, String reqbody) {
         HttpURLConnection con = null;
         Person person = null;
         try {
-            con = getHttpConnection(url, type);
+            con = getHttpConnection(url, type.name());
             if (reqbody != null) {
                 con.setDoInput(true);
                 con.setDoOutput(true);
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
                 DataOutputStream out = new DataOutputStream(con.getOutputStream());
                 out.writeBytes(reqbody);
                 out.flush();

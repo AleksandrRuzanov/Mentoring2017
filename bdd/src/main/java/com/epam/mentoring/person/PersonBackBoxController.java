@@ -33,7 +33,7 @@ public class PersonBackBoxController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<Person> update(Person request) {
         if (personMap.get(request.getId()) != null && personMap.get(request.getId()).getId() == request.getId()) {
